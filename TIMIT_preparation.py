@@ -38,11 +38,30 @@ def copy_folder(in_folder,out_folder):
 def ig_f(dir, files):
  return [f for f in files if os.path.isfile(os.path.join(dir, f))]
 
+def length_rel_subdir(walk_entry):
+ return len(walk_entry[0])
 
+def ChangeLowercase(in_folder):
+ # Change all subdir names
+ walk_entrys = list(os.walk(in_folder))
+ walk_entrys = sorted(walk_entrys, key=length_rel_subdir)
+ walk_entrys.reverse() 
+ for walk_entry in walk_entrys:
+  for subdir in walk_entry[1]:
+   os.rename(os.path.join(walk_entry[0], subdir), os.path.join(walk_entry[0], subdir.lower()))       
+  # Change all file names
+  for walk_entry in os.walk(in_folder):
+   for file in walk_entry[2]:
+    if not file.islower():
+     os.rename(os.path.join(walk_entry[0], file), os.path.join(walk_entry[0], file.lower()))
+ return
 
 in_folder=sys.argv[1]
 out_folder=sys.argv[2]
 list_file=sys.argv[3]
+
+# Change TIMIT files to lowercase
+ChangeLowercase()
 
 # Read List file
 list_sig=ReadList(list_file)
